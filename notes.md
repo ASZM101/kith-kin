@@ -26,3 +26,15 @@
 - [Angie](http://getangie.com)
 - [Waddle](https://www.waddlecouples.com/)
 - [Couple360](https://couple360.net/)
+
+## API notes
+### Auth
+- POST /login, formdata: username and password, return session token (jwt)
+- POST /logout, invalidates session token
+
+### App
+all requests authenticated using bearer auth, http header `Authorization: Bearer <jwt>`
+- GET /question, randomly picks a question and returns it
+- POST /question, formdata: question, answer, returns success or fail
+- GET /info, returns info about the pets
+- GET /history?page=<page>&count=<count> paginates and returns question history
