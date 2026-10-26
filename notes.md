@@ -1,5 +1,11 @@
 # Notes
 
+## MVP Stages
+1. Interactive Virtual Pet ("Kith"): A shared virtual pet inspired by My Boo whose happiness and hunger stats decay over time unless fed and petted by both connected users using earned activity coins.
+2. Shared Pairing & Connection System: Users create accounts and generate a unique 6-character connection code to link dashboards with a partner, friend, or relative.
+3. Shared Activity Dashboard: Real-time summary displaying daily streak counts, combined question answer histories, virtual pet stats, and joint game logs.
+4. Category-Based Question Bank: Daily icebreaker questions filtered by relationship type (Romantic, Friendship, Family) and depth levels (Casual, Deep, Philosophical).
+
 ## Overview
 - LDR dashboard, keeps people connected (daily check-ins, shared responsibilities)
 - For anyone who wants to stay emotionally close while physically far apart (couples, best friends, siblings, distant relatives)
