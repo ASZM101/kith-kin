@@ -20,7 +20,7 @@
 
 ## Implementation
 - Frontend: HTML5 Canvas API (for rendering pet animations/states)
-- Backend: Elysia.js REST API (for managing user creation, code-matching logic, pet state, streak calculations)
+- Backend: Elysia (TypeScript) REST API (for managing user creation, code-matching logic, pet state, streak calculations)
 - Data structure: pair objects storing partner IDs (one per person), streak count, pet state (hunger, happiness, coins), question history
 - Authorization (not using OAuth, just POST): allow people to use their accounts on different devices
     - Hard code users for proof of concept (no registration yet, pair IDs already generated)
