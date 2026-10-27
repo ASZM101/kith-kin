@@ -60,10 +60,15 @@ const app = new Elysia()
     }
 
     return {
-        username: payload.sub
+        username: payload.sub,
+        nonce: payload.nonce
     };
 })
 .get("/profile", ({ username }) => `Hello, ${username}`)
+.post("/logout", ({ nonce }) => {
+    nonces.delete(nonce);
+    return "Logged out!";
+})
 .listen(3000);
 
 console.log(
