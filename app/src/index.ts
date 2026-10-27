@@ -8,6 +8,11 @@ function generateNonce(): string {
 }
 
 const users = await Bun.file("users.json").json();
+
+const questions = (await Bun.file("questions.txt").text())
+    .split(/\r?\n/)
+    .filter(line => line.trim() !== "");
+
 const nonces = new Set<string>();
 
 const app = new Elysia()
@@ -56,7 +61,7 @@ const app = new Elysia()
     }
 
     if (!nonces.has(payload.nonce)) {
-        return status(401, 'Revoked or invaild token');
+        return status(401, 'Revoked or invalid token');
     }
 
     return {
@@ -65,6 +70,7 @@ const app = new Elysia()
     };
 })
 .get("/profile", ({ username }) => `Hello, ${username}`)
+.get("/question", () => questions[Math.floor(Math.random() * questions.length)])
 .post("/logout", ({ nonce }) => {
     nonces.delete(nonce);
     return "Logged out!";
