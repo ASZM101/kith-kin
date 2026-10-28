@@ -32,6 +32,7 @@
 - [Angie](http://getangie.com)
 - [Waddle](https://www.waddlecouples.com/)
 - [Couple360](https://couple360.net/)
+- [My Boo and similar games](https://myboovirtualpet.fandom.com/wiki/List_of_My_Boo-like_games)
 
 ## API notes
 ### Auth
