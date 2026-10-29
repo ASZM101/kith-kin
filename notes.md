@@ -1,10 +1,10 @@
 # Notes
 
 ## MVP Stages
-1. Interactive Virtual Pet ("Kith"): A shared virtual pet inspired by My Boo whose happiness and hunger stats decay over time unless fed and petted by both connected users using earned activity coins.
-2. Shared Pairing & Connection System: Users create accounts and generate a unique 6-character connection code to link dashboards with a partner, friend, or relative.
-3. Shared Activity Dashboard: Real-time summary displaying daily streak counts, combined question answer histories, virtual pet stats, and joint game logs.
-4. Category-Based Question Bank: Daily icebreaker questions filtered by relationship type (Romantic, Friendship, Family) and depth levels (Casual, Deep, Philosophical).
+1. **Interactive Virtual Pet ("Kith"):** A shared virtual pet inspired by My Boo whose happiness and hunger stats decay over time unless fed and petted by both connected users using earned activity coins.
+2. **Shared Pairing & Connection System:** Users create accounts and generate a unique 6-character connection code to link dashboards with a partner, friend, or relative.
+3. **Shared Activity Dashboard:** Real-time summary displaying daily streak counts, combined question answer histories, virtual pet stats, and joint game logs.
+4. **Category-Based Question Bank:** Daily icebreaker questions filtered by relationship type (Romantic, Friendship, Family) and depth levels (Casual, Deep, Philosophical).
 
 ## Overview
 - LDR dashboard, keeps people connected (daily check-ins, shared responsibilities)
@@ -45,3 +45,28 @@ all requests authenticated using bearer auth, http header `Authorization: Bearer
 - POST /question, formdata: question, answer, returns success or fail
 - GET /info, returns info about the pets
 - GET /history?page=<page>&count=<count> paginates and returns question history
+
+## Assets
+- [ ] Kith (pet)
+    - [x] Multiple color options (rainbow, 6 options, finish all states for one entire color first)
+    - [ ] Emotional states
+        - [x] Extremely happy
+        - [ ] Somewhat content
+        - [ ] Neutral
+        - [ ] A bit sad
+        - [ ] Depressed
+    - [ ] Activity states (for each color)
+        - [ ] About to be fed (feeding option selected)
+        - [ ] Actively eating (after food dragged over to pet)
+        - [ ] Being petted (click and hold down mouse while somewhere on pet, drag mouse while holding down, pet can only be petted if no other activity option selected)
+        - [ ] Showering (shower option selected)
+- [ ] Top status bar
+    - [ ] Heart icon (numerical total = level of care pet receives from both paired accounts combined)
+    - [ ] Coin icon (numerical total = activity points earned from answering prompts async)
+    - [ ] Fire icon (numerical total = streak count)
+- [ ] Bottom menu bar
+    - [ ] Small Kith icon (customize pet)
+    - [ ] Plate icon (feed pate)
+    - [ ] Sponge icon (shower pet)
+- [ ] Food options
+- [ ] Logo: default Kith? (red, extremely happy)
