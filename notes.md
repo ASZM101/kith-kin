@@ -50,23 +50,23 @@ all requests authenticated using bearer auth, http header `Authorization: Bearer
 - [ ] Kith (pet)
     - [x] Multiple color options (rainbow, 6 options, finish all states for one entire color first)
     - [ ] Emotional states
-        - [x] Extremely happy
+        - [x] Extremely happy (replace `happy.svg`)
         - [ ] Somewhat content
-        - [ ] Neutral
-        - [ ] A bit sad
+        - [ ] Neutral (replace `neutral.svg`)
+        - [ ] A bit sad (replace `sad.svg`)
         - [ ] Depressed
     - [ ] Activity states (for each color)
-        - [ ] About to be fed (feeding option selected)
+        - [ ] About to be fed (feeding option selected; replace `hungry.svg`)
         - [ ] Actively eating (after food dragged over to pet)
         - [ ] Being petted (click and hold down mouse while somewhere on pet, drag mouse while holding down, pet can only be petted if no other activity option selected)
         - [ ] Showering (shower option selected)
-- [ ] Top status bar
-    - [ ] Heart icon (numerical total = level of care pet receives from both paired accounts combined)
-    - [ ] Coin icon (numerical total = activity points earned from answering prompts async)
-    - [ ] Fire icon (numerical total = streak count)
+- [ ] Top status bar (replace current)
+    - [ ] Heart icon (numerical total = level of care pet receives from both paired accounts combined; replace `heart.svg`)
+    - [ ] Coin icon (numerical total = activity points earned from answering prompts async; replace `coin.svg`)
+    - [ ] Fire icon (numerical total = streak count; replace `streak.svg`)
 - [ ] Bottom menu bar
     - [ ] Small Kith icon (customize pet)
     - [ ] Plate icon (feed pate)
     - [ ] Sponge icon (shower pet)
-- [ ] Food options
-- [ ] Logo: default Kith? (red, extremely happy)
+- [ ] Food options (replace `food.svg`)
+- [ ] Logo: default Kith? (red, extremely happy; replace `logo.svg`)
