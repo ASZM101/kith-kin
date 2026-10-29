@@ -29,7 +29,7 @@ const app = new Elysia()
     hasher.update(password);
     const digest = hasher.digest("hex");
 
-    if (users[username] === digest) {
+    if (users[username].password === digest) {
         const nonce = generateNonce();
         nonces.add(nonce);
         const token = await jwt.sign({
@@ -55,7 +55,7 @@ const app = new Elysia()
 
     const token = authorization.split(' ')[1]
     const payload = await jwt.verify(token);
-    
+
     if (!payload) {
         return status(401, 'Invalid or expired token');
     }
@@ -71,6 +71,40 @@ const app = new Elysia()
 })
 .get("/profile", ({ username }) => `Hello, ${username}`)
 .get("/question", () => questions[Math.floor(Math.random() * questions.length)])
+.post("/question", ({ username, body, status }) => {
+    const { question, answer } = body;
+    if (!question || !answer) {
+        return status(400, 'Bad Request');
+    }
+    if (!questions.includes(question)) {
+        return status(400, 'Bad Request');
+    }
+
+    users[username].answers.push({
+        question,
+        answer
+    });
+    return status(201, "Created answer")
+}, {
+        body: t.Object({
+            question: t.String(),
+            answer: t.String()
+        })
+    })
+.get("/history", ({ username, query, status }) => {
+    let { page, count } = query;
+    if (!users[username]) {
+        return status(401, "User does not exist")
+    }
+    
+    const startIdx = (page ?? 0) * (count ?? 5);
+    return status(200, users[username].answers.slice(startIdx, startIdx + (count ?? 5)));
+}, {
+        query: t.Object({
+            page: t.Optional(t.Number()),
+            count: t.Optional(t.Number())
+        })
+    })
 .post("/logout", ({ nonce }) => {
     nonces.delete(nonce);
     return "Logged out!";
@@ -80,3 +114,13 @@ const app = new Elysia()
 console.log(
     `running on ${app.server?.hostname}:${app.server?.port}`
 );
+
+process.on('SIGINT', async () => {
+    console.log('\nReceived SIGINT. Shutting down gracefully...')
+
+    await app.stop()
+    console.log('Server stopped.')
+
+    await Bun.write("users.json", JSON.stringify(users, null, 2));
+    process.exit(0)
+})
