@@ -82,7 +82,7 @@ const app = new Elysia()
 
     return {
         coins: users[username].coins,
-        happiness: users[users[username]].pet
+        happiness: pets[users[username].pet]
     };
 })
 .post("/spend", ({ username, body, status }) => {
@@ -102,7 +102,7 @@ const app = new Elysia()
         return status(403, "Insufficient coins");
     }
 
-    pets[users[username].pet] = Math.max(100, pets[users[username].pet] + coins);
+    pets[users[username].pet] = Math.min(100, pets[users[username].pet] + coins);
     users[username].coins -= coins;
 
     return status(200, "OK");
