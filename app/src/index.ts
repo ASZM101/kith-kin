@@ -28,6 +28,10 @@ const app = new Elysia()
 .post("/login", async ({ jwt, body, status }) => {
     const { username, password } = body;
 
+    if (!users[username]) {
+        return status(401, "User does not exist")
+    }
+
     const hasher = new Bun.CryptoHasher("sha256");
     hasher.update(password);
     const digest = hasher.digest("hex");
