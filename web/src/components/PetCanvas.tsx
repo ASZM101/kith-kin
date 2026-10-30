@@ -68,15 +68,17 @@ export default function PetCanvas({ mood, reaction, size = 260 }: { mood: Mood; 
 
       const sprite = image(SPRITES[moodRef.current]);
       const speed = moodRef.current === "happy" ? 0.08 : 0.04;
-      const bob = reducedMotion ? 0 : Math.sin(frame * speed) * 6;
+      const phase = Math.abs(Math.sin(frame * speed));
+      const hop = reducedMotion ? 0 : phase * 14;
+      const land = reducedMotion ? 0 : Math.max(0, 0.25 - phase) * 0.4;
       const bounce = bounceRef.current;
       bounceRef.current = Math.max(0, bounce - 0.04);
-      const squash = 1 + Math.sin(bounce * Math.PI) * 0.08;
+      const squash = 1 + Math.sin(bounce * Math.PI) * 0.08 + land - (reducedMotion ? 0 : phase * 0.03);
 
       if (sprite.complete && sprite.naturalWidth) {
-        const w = size * 0.85 * squash;
-        const h = size * 0.85 / squash;
-        ctx.drawImage(sprite, (size - w) / 2, size - h - 4 + bob - bounce * 16, w, h);
+        const w = size * 0.8 * squash;
+        const h = size * 0.8 / squash;
+        ctx.drawImage(sprite, (size - w) / 2, size - h - 10 - hop - bounce * 16, w, h);
       }
 
       particlesRef.current = particlesRef.current.filter(p => p.life > 0);
