@@ -125,6 +125,7 @@ const app = new Elysia()
         question,
         answer
     });
+    users[username].coins += 5;
     return status(201, "Created answer")
 }, {
         body: t.Object({
