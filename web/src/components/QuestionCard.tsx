@@ -44,7 +44,7 @@ export default function QuestionCard({ onAnswered }: { onAnswered: () => void })
       <form onSubmit={submit}>
         <textarea value={answer} onChange={e => setAnswer(e.target.value)} rows={3} maxLength={2000} required placeholder="Your answer…" />
         <div className="row">
-          <button className="primary" disabled={busy || !question}>Answer (+{api.costs.answer} coins)</button>
+          <button className="primary" disabled={busy || !question}>Answer (+{api.rewards.answer} coins)</button>
           <button type="button" onClick={() => { setNotice(null); setReloadKey(k => k + 1); }}>Different question</button>
         </div>
       </form>
