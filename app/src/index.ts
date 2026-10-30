@@ -8,6 +8,7 @@ function generateNonce(): string {
 }
 
 const users = await Bun.file("users.json").json();
+const pets = await Bun.file("pets.json").json();
 
 const questions = (await Bun.file("questions.txt").text())
     .split(/\r?\n/)
@@ -70,6 +71,18 @@ const app = new Elysia()
     };
 })
 .get("/profile", ({ username }) => `Hello, ${username}`)
+.get("/info", ({ username, status }) => {
+    if (!users[username]) {
+        return status(500, "User does not exist");
+    } else if (pets[users[username].pet] === undefined) {
+        return status(500, "Pet does not exist");
+    }
+
+    return {
+        coins: users[username].coins,
+        happiness: users[users[username]].pet
+    };
+})
 .get("/question", () => questions[Math.floor(Math.random() * questions.length)])
 .post("/question", ({ username, body, status }) => {
     const { question, answer } = body;
@@ -94,7 +107,7 @@ const app = new Elysia()
 .get("/history", ({ username, query, status }) => {
     let { page, count } = query;
     if (!users[username]) {
-        return status(401, "User does not exist")
+        return status(500, "User does not exist")
     }
     
     const startIdx = (page ?? 0) * (count ?? 5);
@@ -122,5 +135,6 @@ process.on('SIGINT', async () => {
     console.log('Server stopped.')
 
     await Bun.write("users.json", JSON.stringify(users, null, 2));
+    await Bun.write("pets.json", JSON.stringify(pets, null, 2));
     process.exit(0)
 })

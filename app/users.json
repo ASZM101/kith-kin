@@ -1,6 +1,8 @@
 {
   "test": {
     "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "coins": 5,
+    "pet": "f66a2a1b-5a46-4264-afd3-aa28ed9cf547",
     "answers": [
       {
         "question": "question 3",
