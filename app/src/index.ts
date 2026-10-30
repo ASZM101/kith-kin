@@ -7,6 +7,8 @@ function generateNonce(): string {
     return Array.from(buffer, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+const validSpends = [1, 5, 10];
+
 const users = await Bun.file("users.json").json();
 const pets = await Bun.file("pets.json").json();
 
@@ -83,6 +85,32 @@ const app = new Elysia()
         happiness: users[users[username]].pet
     };
 })
+.post("/spend", ({ username, body, status }) => {
+    if (!users[username]) {
+        return status(500, "User does not exist");
+    } else if (pets[users[username].pet] === undefined) {
+        return status(500, "Pet does not exist");
+    }
+
+    const { coins } = body;
+
+    if (!validSpends.includes(coins)) {
+        return status(403, "Invalid coin expenditure");
+    }
+
+    if (users[username].coins < coins) {
+        return status(403, "Insufficient coins");
+    }
+
+    pets[users[username].pet] = Math.max(100, pets[users[username].pet] + coins);
+    users[username].coins -= coins;
+
+    return status(200, "OK");
+}, {
+        body: t.Object({
+            coins: t.Integer()
+        })
+    })
 .get("/question", () => questions[Math.floor(Math.random() * questions.length)])
 .post("/question", ({ username, body, status }) => {
     const { question, answer } = body;
