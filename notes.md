@@ -42,9 +42,10 @@
 ### App
 all requests authenticated using bearer auth, http header `Authorization: Bearer <jwt>`
 - GET /question, randomly picks a question and returns it
-- POST /question, formdata: question, answer, returns success or fail
-- GET /info, returns info about the pets
+- POST /question, formdata: question, answer, returns success or fail, if success, then it also increments user's coin count by 5
+- GET /info, returns info about the pets (gets the pet happiness number), and the user's current coin count
 - GET /history?page=<page>&count=<count> paginates and returns question history
+- POST /spend: decreases user's coin count by given amount and increases pet happiness by that amount
 
 ## Assets
 - [ ] Kith (pet)
