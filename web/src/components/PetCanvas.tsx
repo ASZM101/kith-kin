@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { Mood } from "../lib/api";
 
-// Placeholder sprites live in public/assets. Swap the files for real art; paths stay the same.
 const SPRITES: Record<Mood, string> = {
   happy: "/assets/pet/happy.svg",
   neutral: "/assets/pet/neutral.svg",

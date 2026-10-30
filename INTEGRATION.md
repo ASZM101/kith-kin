@@ -8,7 +8,7 @@ This branch adds a React frontend in `web/` that talks to the existing Elysia ba
 app/                    Elysia backend (untouched)
 web/                    React + Vite + TypeScript frontend
   src/App.tsx           shows the login screen or the dashboard
-  src/lib/api.ts        every API call, plus temporary stubs (see below)
+  src/lib/api.ts        every API call
   src/components/       LoginScreen, Dashboard, PetCard, PetCanvas, QuestionCard, HistoryList
   public/assets/        placeholder art
   vite.config.ts        dev proxy to the backend
@@ -32,73 +32,27 @@ bun run dev
 
 Open http://localhost:5173 and log in as `test` / `admin123` (from `app/TestUsers.md`).
 
-The backend has no CORS, so the Vite dev server proxies `/login`, `/logout`, `/question`, `/info`, `/history` and `/profile` to port 3000. For a production build run `bun run build` in `web/`; the output in `web/dist` needs to be served from the same origin as the API (for example by the backend, or a reverse proxy).
+The backend has no CORS, so the Vite dev server proxies `/login`, `/logout`, `/question`, `/info`, `/history`, `/spend` and `/profile` to port 3000. For a production build run `bun run build` in `web/`; the output in `web/dist` needs to be served from the same origin as the API (for example by the backend, or a reverse proxy).
 
 ## How the frontend uses the API
 
-| notes.md route | Backend today | Frontend behavior |
+All calls live in `web/src/lib/api.ts`. Every request sends `Authorization: Bearer <token>`, and any 401 (other than on login) clears the token and goes back to the login screen.
+
+| Route | Request | Response the frontend reads |
 | --- | --- | --- |
-| `POST /login` (formdata `username`, `password`) | done | Sends form data, stores the returned token in localStorage |
-| `POST /logout` | done | Calls it, then clears the stored token |
-| `GET /question` | done (plain text) | Shows the text. Also accepts JSON `"..."` or `{ "question": "..." }` if that changes later |
-| `POST /question` (formdata `question`, `answer`) | not built | Sends the real request. On 404 it saves the answer in the local stub |
-| `GET /info` | not built | Calls it. On 404 it shows stub pet stats |
-| `GET /history?page=&count=` | not built | Calls it. On 404 it shows answers saved in the stub |
+| `POST /login` | formdata `username`, `password` | `{ "token": "..." }`, stored in localStorage |
+| `POST /logout` | none | ignored, token is cleared either way |
+| `GET /question` | none | plain text question |
+| `POST /question` | formdata `question`, `answer` | 2xx on success (backend adds 5 coins) |
+| `GET /info` | none | `{ "coins": 5, "happiness": 5 }` |
+| `GET /history?page=&count=` | `page` starts at 0 | bare array `[{ "question": "...", "answer": "..." }]`, oldest first |
+| `POST /spend` | JSON `{ "coins": 1 \| 5 \| 10 }` | 2xx on success, 403 for an invalid amount or too few coins |
 
-Every request sends `Authorization: Bearer <token>`. Any 401 (other than on login) clears the token and goes back to the login screen.
+`/history` has no total, so the history list also fetches the next page to decide whether "Next" is enabled.
 
-Once a route exists on the backend, the frontend uses it automatically. The stub fallbacks are marked `TODO` in `web/src/lib/api.ts` and can be deleted then.
+The pet card shows happiness only (the backend has no hunger). Mood is `sad` below 30, `happy` at 60 or more, else `neutral`. The three spend buttons are Pet (1), Treat (5) and Feed (10).
 
-### Response shapes the frontend expects
-
-notes.md doesn't define these, so these are what the frontend is written against. Change `web/src/lib/api.ts` if the backend picks something different.
-
-`GET /info`
-
-```json
-{
-  "username": "test",
-  "partner": "partner-name-or-null",
-  "coins": 20,
-  "streak": 3,
-  "pet": { "name": "Kith", "hunger": 70, "happiness": 70 }
-}
-```
-
-`hunger` and `happiness` run 0 to 100, where 100 is best. The frontend works out the mood: `hungry` if hunger < 30, else `sad` if happiness < 30, else `happy` if both are 60 or more, else `neutral`.
-
-`GET /history?page=1&count=5`
-
-```json
-{
-  "page": 1,
-  "count": 5,
-  "total": 12,
-  "items": [
-    {
-      "question": "question 3",
-      "answers": [{ "username": "test", "answer": "hello", "answered_at": "2026-10-28T17:00:00Z" }]
-    }
-  ]
-}
-```
-
-Items are grouped by question, as notes.md describes.
-
-`POST /question` only needs a 2xx status on success.
-
-## Stubs
-
-notes.md describes feeding and petting the pet with coins but has no route for it, so `api.feed()` and `api.pet()` are stub functions that change local state only.
-
-| Stub | Rule |
-| --- | --- |
-| Starting state | 20 coins, 70 fullness, 70 happiness, 0 streak |
-| Answer a question | +10 coins |
-| Feed | costs 5 coins, +25 fullness |
-| Pet | costs 3 coins, +15 happiness |
-
-Stub data is kept in memory and resets when the page reloads. There is no decay in the stub; that belongs on the backend.
+If `/info` fails, the dashboard shows an error banner and keeps the question, history and spend buttons usable.
 
 ## Replacing placeholder assets
 
@@ -120,8 +74,8 @@ To use PNGs, change the extensions in `SPRITES` and `PARTICLES` in `web/src/comp
 
 ## What the backend still needs (for whoever builds it)
 
-- `POST /question`, `GET /info`, `GET /history` from notes.md, returning the shapes above
-- Routes for feeding and petting, then point `api.feed()` / `api.pet()` at them
-- Storage for pairs, pet state, coins, streaks and answers
-- Pet decay over time
-- Serving `web/dist`, or CORS, for production
+- `GET /info` reads `users[users[username]].pet`, which throws, so it currently returns 500. It probably means `pets[users[username].pet]`.
+- `POST /spend` uses `Math.max(100, ...)`, which jumps happiness to at least 100. It probably means `Math.min`.
+- `POST /login` with an unknown username throws (500). The frontend shows that as a wrong username/password.
+- Pairing, streaks, partner answers in history, and pet decay.
+- Serving `web/dist`, or CORS, for production.

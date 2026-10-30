@@ -1,5 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-  <!-- PLACEHOLDER: replace with real "hungry" pet art (256x256, transparent background) -->
   <ellipse cx="128" cy="236" rx="70" ry="10" fill="#000" opacity="0.12"/>
   <path d="M128 40 C 196 40 220 110 214 160 C 208 210 172 228 128 228 C 84 228 48 210 42 160 C 36 110 60 40 128 40 Z" fill="#ffe3a8" stroke="#2b2b3a" stroke-width="6"/>
   <circle cx="100" cy="120" r="10" fill="#2b2b3a"/><circle cx="156" cy="120" r="10" fill="#2b2b3a"/>

@@ -7,7 +7,10 @@ function generateNonce(): string {
     return Array.from(buffer, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+const validSpends = [1, 5, 10];
+
 const users = await Bun.file("users.json").json();
+const pets = await Bun.file("pets.json").json();
 
 const questions = (await Bun.file("questions.txt").text())
     .split(/\r?\n/)
@@ -24,6 +27,10 @@ const app = new Elysia()
 )
 .post("/login", async ({ jwt, body, status }) => {
     const { username, password } = body;
+
+    if (!users[username]) {
+        return status(401, "User does not exist")
+    }
 
     const hasher = new Bun.CryptoHasher("sha256");
     hasher.update(password);
@@ -70,6 +77,44 @@ const app = new Elysia()
     };
 })
 .get("/profile", ({ username }) => `Hello, ${username}`)
+.get("/info", ({ username, status }) => {
+    if (!users[username]) {
+        return status(500, "User does not exist");
+    } else if (pets[users[username].pet] === undefined) {
+        return status(500, "Pet does not exist");
+    }
+
+    return {
+        coins: users[username].coins,
+        happiness: pets[users[username].pet]
+    };
+})
+.post("/spend", ({ username, body, status }) => {
+    if (!users[username]) {
+        return status(500, "User does not exist");
+    } else if (pets[users[username].pet] === undefined) {
+        return status(500, "Pet does not exist");
+    }
+
+    const { coins } = body;
+
+    if (!validSpends.includes(coins)) {
+        return status(403, "Invalid coin expenditure");
+    }
+
+    if (users[username].coins < coins) {
+        return status(403, "Insufficient coins");
+    }
+
+    pets[users[username].pet] = Math.min(100, pets[users[username].pet] + coins);
+    users[username].coins -= coins;
+
+    return status(200, "OK");
+}, {
+        body: t.Object({
+            coins: t.Integer()
+        })
+    })
 .get("/question", () => questions[Math.floor(Math.random() * questions.length)])
 .post("/question", ({ username, body, status }) => {
     const { question, answer } = body;
@@ -84,6 +129,7 @@ const app = new Elysia()
         question,
         answer
     });
+    users[username].coins += 5;
     return status(201, "Created answer")
 }, {
         body: t.Object({
@@ -94,7 +140,7 @@ const app = new Elysia()
 .get("/history", ({ username, query, status }) => {
     let { page, count } = query;
     if (!users[username]) {
-        return status(401, "User does not exist")
+        return status(500, "User does not exist")
     }
     
     const startIdx = (page ?? 0) * (count ?? 5);
@@ -122,5 +168,6 @@ process.on('SIGINT', async () => {
     console.log('Server stopped.')
 
     await Bun.write("users.json", JSON.stringify(users, null, 2));
+    await Bun.write("pets.json", JSON.stringify(pets, null, 2));
     process.exit(0)
 })

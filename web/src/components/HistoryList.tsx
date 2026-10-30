@@ -1,42 +1,50 @@
 import { useEffect, useState } from "react";
-import { api, type HistoryPage } from "../lib/api";
+import { api, type HistoryItem } from "../lib/api";
 
 const PAGE_SIZE = 5;
 
 export default function HistoryList({ refreshKey }: { refreshKey: number }) {
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState<HistoryPage | null>(null);
+  const [page, setPage] = useState(0);
+  const [items, setItems] = useState<HistoryItem[] | null>(null);
+  const [hasNext, setHasNext] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.history(page, PAGE_SIZE).then(setData).catch(e => setError(e.message));
+    let cancelled = false;
+    Promise.all([api.history(page, PAGE_SIZE), api.history(page + 1, PAGE_SIZE)])
+      .then(([current, next]) => {
+        if (cancelled) return;
+        if (current.length === 0 && page > 0) {
+          setPage(p => p - 1);
+          return;
+        }
+        setItems(current);
+        setHasNext(next.length > 0);
+        setError(null);
+      })
+      .catch(e => !cancelled && setError((e as Error).message));
+    return () => { cancelled = true; };
   }, [page, refreshKey]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="muted">Loading…</p>;
-  if (data.total === 0) return <p className="muted">No answers yet. Answer a question to start your history.</p>;
+  if (!items) return <p className="muted">Loading…</p>;
+  if (items.length === 0) return <p className="muted">No answers yet. Answer a question to start your history.</p>;
 
-  const pages = Math.ceil(data.total / PAGE_SIZE);
   return (
     <div>
       <ul className="history">
-        {data.items.map(item => (
-          <li key={item.question}>
+        {items.map((item, i) => (
+          <li key={page * PAGE_SIZE + i}>
             <p className="question small">{item.question}</p>
-            {item.answers.map(a => (
-              <div key={a.answered_at + a.username} className="answer">
-                <strong>{a.username}</strong> <span className="muted small">{new Date(a.answered_at).toLocaleDateString()}</span>
-                <p>{a.answer}</p>
-              </div>
-            ))}
+            <div className="answer"><p>{item.answer}</p></div>
           </li>
         ))}
       </ul>
-      {pages > 1 && (
+      {(page > 0 || hasNext) && (
         <div className="row pager">
-          <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Newer</button>
-          <span className="muted small">Page {page} of {pages}</span>
-          <button disabled={page >= pages} onClick={() => setPage(p => p + 1)}>Older</button>
+          <button disabled={page === 0} onClick={() => setPage(p => p - 1)}>Previous</button>
+          <span className="muted small">Page {page + 1}</span>
+          <button disabled={!hasNext} onClick={() => setPage(p => p + 1)}>Next</button>
         </div>
       )}
     </div>

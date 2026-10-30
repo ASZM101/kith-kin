@@ -44,7 +44,10 @@ all requests authenticated using bearer auth, http header `Authorization: Bearer
 - GET /question, randomly picks a question and returns it
 - POST /question, formdata: question, answer, returns success or fail, if success, then it also increments user's coin count by 5
 - GET /info, returns info about the pets (gets the pet happiness number), and the user's current coin count
+- POST /question, formdata: question, answer, returns success or fail, if success, then it also increments user's coin count by 5
+- GET /info, returns info about the pets (gets the pet happiness number), and the user's current coin count
 - GET /history?page=<page>&count=<count> paginates and returns question history
+- POST /spend: decreases user's coin count by given amount and increases pet happiness by that amount
 - POST /spend: decreases user's coin count by given amount and increases pet happiness by that amount
 
 ## Assets
@@ -52,15 +55,23 @@ all requests authenticated using bearer auth, http header `Authorization: Bearer
     - [x] Multiple color options (rainbow, 6 options, finish all states for one entire color first)
     - [ ] Emotional states
         - [x] Extremely happy (replace `happy.svg`)
+        - [x] Extremely happy (replace `happy.svg`)
         - [ ] Somewhat content
+        - [ ] Neutral (replace `neutral.svg`)
+        - [ ] A bit sad (replace `sad.svg`)
         - [ ] Neutral (replace `neutral.svg`)
         - [ ] A bit sad (replace `sad.svg`)
         - [ ] Depressed
     - [ ] Activity states (for each color)
         - [ ] About to be fed (feeding option selected; replace `hungry.svg`)
+        - [ ] About to be fed (feeding option selected; replace `hungry.svg`)
         - [ ] Actively eating (after food dragged over to pet)
         - [ ] Being petted (click and hold down mouse while somewhere on pet, drag mouse while holding down, pet can only be petted if no other activity option selected)
         - [ ] Showering (shower option selected)
+- [ ] Top status bar (replace current)
+    - [ ] Heart icon (numerical total = level of care pet receives from both paired accounts combined; replace `heart.svg`)
+    - [ ] Coin icon (numerical total = activity points earned from answering prompts async; replace `coin.svg`)
+    - [ ] Fire icon (numerical total = streak count; replace `streak.svg`)
 - [ ] Top status bar (replace current)
     - [ ] Heart icon (numerical total = level of care pet receives from both paired accounts combined; replace `heart.svg`)
     - [ ] Coin icon (numerical total = activity points earned from answering prompts async; replace `coin.svg`)
